@@ -11,3 +11,4 @@ dist/
 *connection*.json
 client-key
 api-keys.json
+key-tests.json

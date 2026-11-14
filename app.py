@@ -92,7 +92,10 @@ class App:
         ttk.Label(parent,text='给每位使用者创建独立的 API Key',font=('Sans',15,'bold')).pack(anchor='w')
         ttk.Label(parent,text='所有 Key 使用同一个中转地址和上游账号额度。备注会显示在对话记录中；启用对话记录后才能保存聊天。',wraplength=850).pack(anchor='w',pady=10)
         row=ttk.Frame(parent);row.pack(fill='x',pady=(0,10))
-        for text,fn in [('创建 API Key',self.create_key),('复制 Key + URL',self.copy_key_connection),('修改备注',self.rename_key),('启用 / 停用',self.toggle_key),('删除密钥',self.delete_key),('刷新列表',self.refresh_keys)]:
+        for text,fn in [('创建 API Key',self.create_key),('复制 Key + URL',self.copy_key_connection),('一键测试',self.test_selected_key),('刷新列表',self.refresh_keys)]:
+            ttk.Button(row,text=text,command=fn).pack(side='left',padx=(0,6))
+        row=ttk.Frame(parent);row.pack(fill='x',pady=(0,10))
+        for text,fn in [('修改备注',self.rename_key),('启用 / 停用',self.toggle_key),('删除密钥',self.delete_key),('上次测试结果',lambda:self.test_selected_key(False))]:
             ttk.Button(row,text=text,command=fn).pack(side='left',padx=(0,6))
         self.key_table=ttk.Treeview(parent,columns=('name','id','status','created'),show='headings',height=9,selectmode='browse')
         for name,title,width in [('name','使用者备注',240),('id','Key 指纹',150),('status','状态',90),('created','创建 / 导入时间',170)]:
@@ -139,6 +142,12 @@ class App:
             self.root.after(0,lambda:self.copy(text))
             return '已复制使用者备注、API Key、公网 URL、模型名和使用告知，可以直接发给朋友。'
         self.key_task(prepare)
+    def test_selected_key(self,auto_start=True):
+        if self.busy:self.key_status.set('请等待当前操作完成。');return
+        entry=self.selected_key()
+        if not entry:return
+        from capability_window import CapabilityWindow
+        CapabilityWindow(self,entry,auto_start)
     def rename_key(self):
         if self.busy:return
         entry=self.selected_key()

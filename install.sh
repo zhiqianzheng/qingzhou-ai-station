@@ -20,7 +20,7 @@ fi
 app_dest="$HOME/.local/opt/ai-station"
 core_dest="$HOME/.local/opt/cliproxyapi"
 mkdir -p "$app_dest" "$core_dest" "$HOME/.local/share/applications" "$HOME/.local/bin"
-install -m 755 app.py backend.py recorder.py key_manager.py "$app_dest/"
+install -m 755 app.py backend.py recorder.py key_manager.py capability_tester.py capability_window.py "$app_dest/"
 mkdir -p "$app_dest/assets"
 install -m 644 assets/icon.png assets/icon.svg "$app_dest/assets/"
 install -m 755 install-tailscale.sh "$app_dest/install-tailscale.sh"

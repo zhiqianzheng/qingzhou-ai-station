@@ -337,3 +337,35 @@ def disable_public():
     if not exe:return '公网入口未安装。'
     try:return run([exe,'funnel','--https=443','off']) or '公网入口已关闭。'
     except RuntimeError:return elevated([exe,'funnel','--https=443','off']) or '公网入口已关闭。'
+
+
+def key_test_report(key_id):
+    path=STATE/'key-tests.json'
+    try:return json.loads(path.read_text(encoding='utf-8')).get(key_id)
+    except (OSError,ValueError,AttributeError):return None
+
+
+def test_key_capabilities(key_id,model,extended=False,target='local',on_update=None,cancel=None):
+    from capability_tester import Tester
+    from key_manager import atomic_write
+    entry=next((e for e in key_manager().list() if e['id']==key_id),None)
+    if entry is None or not entry.get('secret'):raise ValueError('找不到这把 Key，请刷新列表后重试。')
+    if not model.strip():raise ValueError('请填写要测试的模型名。')
+    port,_=settings();local=f'http://127.0.0.1:{port}/v1';public=None
+    try:
+        status=public_status();match=re.search(r'https://[a-zA-Z0-9.-]+(?::\d+)?',status)
+        if match and 'Funnel on' in status:public=match[0].rstrip('/')+'/v1'
+    except (RuntimeError,OSError,subprocess.TimeoutExpired):pass
+    if target=='public' and not public:raise ValueError('没有可用的公网入口，请先开启公网访问，或选择本机测试。')
+    tester=Tester(entry['secret'],model.strip(),public if target=='public' else local,
+                  public_url=public,extended=extended,on_update=on_update,cancel=cancel)
+    report=tester.run();report.update(key_id=key_id,name=entry['name'])
+    try:
+        manager=key_manager()
+        with manager.locked():
+            path=STATE/'key-tests.json'
+            try:reports=json.loads(path.read_text(encoding='utf-8'))
+            except (OSError,ValueError):reports={}
+            reports[key_id]=report;atomic_write(path,json.dumps(reports,ensure_ascii=False,indent=2))
+    except (OSError,ValueError,TypeError):report['save_warning']='本次结果未能保存到本机，可在窗口中复制报告。'
+    return report
