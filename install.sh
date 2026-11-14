@@ -9,10 +9,10 @@ admin() {
   elif command -v pkexec >/dev/null; then pkexec "$@"
   else sudo "$@"; fi
 }
-if ! /usr/bin/python3 -c 'import tkinter, aiohttp' 2>/dev/null; then
+if ! /usr/bin/python3 -c 'import tkinter, aiohttp, yaml' 2>/dev/null; then
   if command -v apt-get >/dev/null; then
     admin apt-get update
-    admin apt-get install -y python3 python3-tk python3-aiohttp
+    admin apt-get install -y python3 python3-tk python3-aiohttp python3-yaml
   else
     echo '请通过系统包管理器安装 Python 3 和 tkinter，再重新运行。'; exit 1
   fi
@@ -20,7 +20,7 @@ fi
 app_dest="$HOME/.local/opt/ai-station"
 core_dest="$HOME/.local/opt/cliproxyapi"
 mkdir -p "$app_dest" "$core_dest" "$HOME/.local/share/applications" "$HOME/.local/bin"
-install -m 755 app.py backend.py recorder.py "$app_dest/"
+install -m 755 app.py backend.py recorder.py key_manager.py "$app_dest/"
 mkdir -p "$app_dest/assets"
 install -m 644 assets/icon.png assets/icon.svg "$app_dest/assets/"
 install -m 755 install-tailscale.sh "$app_dest/install-tailscale.sh"

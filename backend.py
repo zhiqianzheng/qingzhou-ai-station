@@ -11,7 +11,8 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
-from recorder import Store
+from recorder import Store, NOTICE
+from key_manager import KeyManager
 
 WINDOWS = sys.platform == 'win32'
 HOME = Path.home()
@@ -31,6 +32,31 @@ def run(args, timeout=30):
     return p.stdout.strip()
 
 def store(): return Store(STATE)
+
+def keys_changed():
+    running=win_process('core') if WINDOWS else subprocess.run(['systemctl','--user','is-active','--quiet','cliproxyapi']).returncode==0
+    if running:restart()
+
+def key_manager(): return KeyManager(CONFIG,STATE,on_change=keys_changed)
+
+def key_labels():
+    return {e['id']:e['name']+('（已删除）' if e.get('deleted') else '') for e in key_manager().list(include_deleted=True)}
+
+def share_connection(key_id,model):
+    entry=next((e for e in key_manager().list() if e['id']==key_id),None)
+    if entry is None:raise ValueError('找不到这把密钥，请刷新列表后重试。')
+    if not entry['enabled']:raise ValueError('这把密钥已停用，请先启用再分享。')
+    if not active():raise ValueError('请先启动中转服务，再复制给朋友。')
+    status=public_status()
+    match=re.search(r'https://[a-zA-Z0-9.-]+(?::\d+)?',status)
+    if not match or 'Funnel on' not in status:
+        raise ValueError('尚未开启公网访问。本机地址无法供朋友使用，请先在「连接与服务」中开启公网。')
+    url=match[0].rstrip('/')+'/v1'
+    return f'使用者：{entry["name"]}\nBase URL：{url}\nAPI Key：{entry["secret"]}\n模型：{model}\n\n使用告知：{NOTICE}'
+
+def create_key(name):
+    configure()
+    return key_manager().create(name)
 
 def core_settings():
     s=CONFIG.read_text() if CONFIG.exists() else ''

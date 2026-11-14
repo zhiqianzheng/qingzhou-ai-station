@@ -10,3 +10,4 @@ dist/
 *auth*.json
 *connection*.json
 client-key
+api-keys.json

@@ -2,13 +2,13 @@
 import asyncio
 from contextlib import contextmanager
 import gzip
-import hashlib
 import json
 import os
 import sqlite3
 import time
 from pathlib import Path
 from aiohttp import ClientSession, ClientTimeout, WSMsgType, web
+from key_manager import fingerprint
 
 LIMIT = 2 * 1024 * 1024
 HOPS = {'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
@@ -49,11 +49,11 @@ class Store:
         clipped = len(request) > LIMIT
         request = request[:LIMIT]
         model = str(payload.get('model', ''))[:200] if isinstance(payload, dict) else ''
-        key_id = hashlib.sha256(key.encode()).hexdigest()[:12] if key else 'unknown'
+        key_id = fingerprint(key)
         with self.connect() as c:
             cur = c.execute('INSERT INTO conversations(created,endpoint,key_id,model,request,status,truncated) VALUES(?,?,?,?,?,?,?)',
                             (time.time(), endpoint[:150], key_id, model, request, '处理中', clipped))
-            c.execute('DELETE FROM conversations WHERE id NOT IN (SELECT id FROM conversations ORDER BY id DESC LIMIT 500)')
+            c.execute('DELETE FROM conversations WHERE key_id=? AND id NOT IN (SELECT id FROM conversations WHERE key_id=? ORDER BY id DESC LIMIT 500)', (key_id,key_id))
             return cur.lastrowid
     def finish(self, row, response, status, truncated=False):
         if row is None: return
@@ -63,10 +63,16 @@ class Store:
                 c.execute('DELETE FROM conversations WHERE id=?', (row,)); return
             c.execute('UPDATE conversations SET response=?, status=?, truncated=MAX(truncated,?) WHERE id=?',
                       (response[:LIMIT], status, truncated or len(response)>LIMIT, row))
-    def recent(self):
+    def recent(self,key_id=None):
         with self.connect() as c:
             c.row_factory = sqlite3.Row
-            return [dict(r) for r in c.execute('SELECT id,created,key_id,model,status,truncated FROM conversations ORDER BY id DESC LIMIT 500')]
+            sql='SELECT id,created,key_id,model,status,truncated FROM conversations'
+            parameters=()
+            if key_id is not None:sql+=' WHERE key_id=?';parameters=(key_id,)
+            return [dict(r) for r in c.execute(sql+' ORDER BY id DESC LIMIT 500',parameters)]
+    def key_ids(self):
+        with self.connect() as c:
+            return [r[0] for r in c.execute('SELECT DISTINCT key_id FROM conversations ORDER BY key_id')]
     def detail(self, row):
         with self.connect() as c:
             c.row_factory = sqlite3.Row
