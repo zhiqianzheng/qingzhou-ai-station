@@ -1,7 +1,7 @@
 [Setup]
 AppId={{2C280749-F021-4BF4-87D1-2857B37D61BC}
 AppName=Qingzhou AI Station
-AppVersion=0.2.1
+AppVersion=0.3.0
 AppPublisher=zhiqianzheng
 DefaultDirName={localappdata}\Programs\QingzhouAIStation
 DefaultGroupName=Qingzhou AI Station
@@ -9,7 +9,7 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=..\dist
-OutputBaseFilename=qingzhou-ai-station-0.2.1-windows-x64-setup
+OutputBaseFilename=qingzhou-ai-station-0.3.0-windows-x64-setup
 SetupIconFile=..\assets\icon.ico
 UninstallDisplayIcon={app}\QingzhouAIStation.exe
 Compression=lzma2

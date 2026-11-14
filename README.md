@@ -4,7 +4,7 @@
 
 Linux / Windows 桌面 App，把 CLIProxyAPI 配置、ChatGPT 浏览器授权、API 连接信息和可选的本机对话记录放进一个界面。无需把账号密码交给 App。
 
-## 当前开发版新增（尚未更新 Release 包）
+## v0.3.0 新增功能
 
 - API Key 管理：创建独立密钥、填写使用者备注、修改备注、启用 / 停用、删除。
 - 选中密钥后，点击「复制 Key + URL」一键复制备注、公网 Base URL、API Key、模型名和对话记录告知，直接发给朋友。没有开启公网、服务未运行或密钥已停用时会提示先处理。
@@ -20,14 +20,14 @@ Linux / Windows 桌面 App，把 CLIProxyAPI 配置、ChatGPT 浏览器授权、
 
 ## 下载
 
-在本仓库的 **Releases** 页面下载 `v0.2.1` 预览版：
+在本仓库的 **Releases** 页面下载 `v0.3.0` 预览版：
 
 | 系统 | 文件 | 使用方式 |
 | --- | --- | --- |
-| Ubuntu / Debian x86_64 | `qingzhou-ai-station_0.2.1_amd64.deb` | 双击，通过系统软件安装器安装 |
-| Linux x86_64 便携包 | `qingzhou-ai-station-0.2.1-linux-x64.tar.gz` | 解压后运行 `./install.sh` |
-| Windows 10 / 11 x64 安装包 | `qingzhou-ai-station-0.2.1-windows-x64-setup.exe` | 双击，按向导安装 |
-| Windows x64 便携包 | `qingzhou-ai-station-0.2.1-windows-x64.zip` | 完整解压文件夹，双击 `QingzhouAIStation.exe` |
+| Ubuntu / Debian x86_64 | `qingzhou-ai-station_0.3.0_amd64.deb` | 双击，通过系统软件安装器安装 |
+| Linux x86_64 便携包 | `qingzhou-ai-station-0.3.0-linux-x64.tar.gz` | 解压后运行 `./install.sh` |
+| Windows 10 / 11 x64 安装包 | `qingzhou-ai-station-0.3.0-windows-x64-setup.exe` | 双击，按向导安装 |
+| Windows x64 便携包 | `qingzhou-ai-station-0.3.0-windows-x64.zip` | 完整解压文件夹，双击 `QingzhouAIStation.exe` |
 
 Windows 包含 Python 运行时，不需要另装 Python。预览版未进行商业代码签名。Linux 安装包通过系统包管理器安装 Python / tkinter / aiohttp 依赖。
 
