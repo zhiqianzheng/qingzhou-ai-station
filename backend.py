@@ -252,7 +252,9 @@ def elevated(command,timeout=600,on_line=None):
     script=output.with_suffix('.ps1')
     quote=lambda x:"'"+str(x).replace("'","''")+"'"
     script.write_text('& '+ ' '.join(quote(x) for x in command)+f' *> {quote(output)}\nexit $LASTEXITCODE',encoding='utf-8-sig')
-    invocation=f"$p=Start-Process powershell.exe -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File',\"{str(script).replace(chr(34),'`'+chr(34))}\") -Verb RunAs -PassThru -Wait; exit $p.ExitCode"
+    import base64
+    encoded=base64.b64encode(('& '+quote(script)).encode('utf-16-le')).decode('ascii')
+    invocation=f"$p=Start-Process powershell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -EncodedCommand {encoded}' -Verb RunAs -PassThru -Wait; exit $p.ExitCode"
     p=subprocess.Popen(['powershell.exe','-NoProfile','-Command',invocation],creationflags=subprocess.CREATE_NO_WINDOW)
     seen='';end=time.monotonic()+timeout
     try:
