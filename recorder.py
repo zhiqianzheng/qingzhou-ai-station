@@ -1,5 +1,6 @@
 """Local, opt-in conversation recorder. Never stores HTTP headers or credentials."""
 import asyncio
+from contextlib import contextmanager
 import gzip
 import hashlib
 import json
@@ -26,8 +27,14 @@ class Store:
               key_id TEXT, model TEXT, request TEXT, response TEXT DEFAULT '',
               status TEXT, truncated INTEGER DEFAULT 0)''')
         self.db.chmod(0o600)
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.db, timeout=10)
+        connection=sqlite3.connect(self.db,timeout=10)
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
     def options(self):
         try: return json.loads(self.config.read_text())
         except (OSError, ValueError): return {'enabled': False}

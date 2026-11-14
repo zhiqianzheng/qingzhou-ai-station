@@ -7,7 +7,7 @@ trap 'rm -rf "$stage"' EXIT
 mkdir -p "$stage/DEBIAN" "$stage/opt/ai-station/core" "$stage/opt/ai-station/assets" "$stage/usr/share/applications" "$stage/usr/share/icons/hicolor/512x512/apps" "$stage/usr/bin"
 cat > "$stage/DEBIAN/control" <<'EOF'
 Package: qingzhou-ai-station
-Version: 0.2.0
+Version: 0.2.1
 Architecture: amd64
 Maintainer: zhiqianzheng <133075010+zhiqianzheng@users.noreply.github.com>
 Depends: python3 (>= 3.10), python3-tk, python3-aiohttp, policykit-1
@@ -38,10 +38,10 @@ Categories=Network;Utility;
 EOF
 find "$stage" -type d -exec chmod 755 {} +
 chmod 644 "$stage/DEBIAN/control" "$stage/usr/share/applications/qingzhou-ai-station.desktop"
-dpkg-deb --root-owner-group -Zxz -z4 --build "$stage" dist/qingzhou-ai-station_0.2.0_amd64.deb
+dpkg-deb --root-owner-group -Zxz -z4 --build "$stage" dist/qingzhou-ai-station_0.2.1_amd64.deb
 portable="$stage/portable/qingzhou-ai-station"
 mkdir -p "$portable/core" "$portable/assets"
 cp app.py backend.py recorder.py install.sh install-tailscale.sh README.md THIRD_PARTY_LICENSES.txt "$portable/"
 cp core/cli-proxy-api core/LICENSE "$portable/core/"
 cp assets/icon.png assets/icon.svg "$portable/assets/"
-tar -C "$stage/portable" -czf dist/qingzhou-ai-station-0.2.0-linux-x64.tar.gz qingzhou-ai-station
+tar -C "$stage/portable" -czf dist/qingzhou-ai-station-0.2.1-linux-x64.tar.gz qingzhou-ai-station

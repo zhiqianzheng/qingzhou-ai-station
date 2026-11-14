@@ -7,7 +7,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed' }
 python -m PyInstaller --noconfirm --clean --windowed --name QingzhouAIStation --icon assets/icon.ico --add-data "assets;assets" --add-data "core;core" --add-data "THIRD_PARTY_LICENSES.txt;." app.py
 if ($LASTEXITCODE -ne 0) { throw 'Windows build failed' }
 Copy-Item README.md dist/QingzhouAIStation/
-Compress-Archive -Path dist/QingzhouAIStation -DestinationPath dist/qingzhou-ai-station-0.2.0-windows-x64.zip -Force
+Compress-Archive -Path dist/QingzhouAIStation -DestinationPath dist/qingzhou-ai-station-0.2.1-windows-x64.zip -Force
 $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
 if (!(Test-Path $iscc)) {
   choco install innosetup -y --no-progress

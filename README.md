@@ -6,14 +6,14 @@ Linux / Windows 桌面 App，把 CLIProxyAPI 配置、ChatGPT 浏览器授权、
 
 ## 下载
 
-在本仓库的 **Releases** 页面下载 `v0.2.0` 预览版：
+在本仓库的 **Releases** 页面下载 `v0.2.1` 预览版：
 
 | 系统 | 文件 | 使用方式 |
 | --- | --- | --- |
-| Ubuntu / Debian x86_64 | `qingzhou-ai-station_0.2.0_amd64.deb` | 双击，通过系统软件安装器安装 |
-| Linux x86_64 便携包 | `qingzhou-ai-station-0.2.0-linux-x64.tar.gz` | 解压后运行 `./install.sh` |
-| Windows 10 / 11 x64 安装包 | `qingzhou-ai-station-0.2.0-windows-x64-setup.exe` | 双击，按向导安装 |
-| Windows x64 便携包 | `qingzhou-ai-station-0.2.0-windows-x64.zip` | 完整解压文件夹，双击 `QingzhouAIStation.exe` |
+| Ubuntu / Debian x86_64 | `qingzhou-ai-station_0.2.1_amd64.deb` | 双击，通过系统软件安装器安装 |
+| Linux x86_64 便携包 | `qingzhou-ai-station-0.2.1-linux-x64.tar.gz` | 解压后运行 `./install.sh` |
+| Windows 10 / 11 x64 安装包 | `qingzhou-ai-station-0.2.1-windows-x64-setup.exe` | 双击，按向导安装 |
+| Windows x64 便携包 | `qingzhou-ai-station-0.2.1-windows-x64.zip` | 完整解压文件夹，双击 `QingzhouAIStation.exe` |
 
 Windows 包含 Python 运行时，不需要另装 Python。预览版未进行商业代码签名。Linux 安装包通过系统包管理器安装 Python / tkinter / aiohttp 依赖。
 
