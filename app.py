@@ -65,6 +65,7 @@ class App:
         ttk.Button(row,text='关闭记录',command=lambda:self.task(lambda:b.recording(False))).pack(side='left',padx=6)
         ttk.Button(row,text='复制使用告知',command=lambda:self.copy(NOTICE)).pack(side='left')
         ttk.Button(row,text='清空记录',command=self.clear_history).pack(side='right')
+        ttk.Button(row,text='刷新记录',command=self.refresh_history).pack(side='right',padx=6)
         ttk.Label(history,text='最近 500 次请求 · 仅保存在本机 · 共用同一个 Key 无法区分具体使用者 · 图片和音频不记录',wraplength=850).pack(anchor='w',pady=(0,10))
         pane=ttk.Panedwindow(history,orient='vertical');pane.pack(fill='both',expand=True)
         upper=ttk.Frame(pane);lower=ttk.Frame(pane);pane.add(upper,weight=1);pane.add(lower,weight=2)
@@ -122,10 +123,16 @@ class App:
     def clear_history(self):
         if messagebox.askyesno('清空记录','永久删除本机保存的全部对话记录？',parent=self.root):
             b.store().clear();self.last_rows=[];self.poll_history(schedule=False);self.show_detail()
-    def poll_history(self,schedule=True):
+    def refresh_history(self):
+        self.poll_history(schedule=False,force=True)
+        if not self.table.selection() and self.table.get_children():
+            latest=self.table.get_children()[0]
+            self.table.selection_set(latest);self.table.see(latest)
+        self.show_detail()
+    def poll_history(self,schedule=True,force=False):
         try:
             rows=b.store().recent()
-            if rows!=self.last_rows:
+            if force or rows!=self.last_rows:
                 selected=self.table.selection();self.table.delete(*self.table.get_children())
                 for r in rows:
                     self.table.insert('','end',iid=str(r['id']),values=(time.strftime('%m-%d %H:%M:%S',time.localtime(r['created'])),r['key_id'],r['model'],r['status']))
